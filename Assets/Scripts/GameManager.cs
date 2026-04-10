@@ -76,7 +76,10 @@ public class GameManager : MonoBehaviour
     /* 每日结算后调用，准备迎接新的一天 */
     public void ResetDailyStats()
     {
-        /* 准确率强制重置为 50，其他数值继承昨天的保持不变 */
+        /* 在重置准确率之前，先让 FeedbackManager 结算一下今天的宠物状态 */
+        FeedbackManager.Instance.CalculatePetState(accuracy);
+
+        /* 算完账之后，再把准确率强制重置为 50，其他数值继承昨天的保持不变 */
         accuracy = 50;
         
         Debug.Log("新的一天开始了，准确率已重置为 50！");
