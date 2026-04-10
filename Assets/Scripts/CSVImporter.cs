@@ -41,37 +41,41 @@ public void LoadData()
             /* 按照逗号，把这一行切成一个个的格子（列） */
             string[] columns = line.Split(',');
 
-            /* 确保这一行至少有11个格子，防止表格没填满导致程序崩溃 */
-            if (columns.Length >= 11)
+            /* 因为加了一列，现在一行至少要有 12 个格子 */
+            if (columns.Length >= 12)
             {
-                /* 拿出一张新的空白图纸 */
                 MessageData newData = new MessageData();
                 
-                /* 开始照着格子依次填入数据 */
+                /* 第 1、2 列没变 */
                 newData.id = columns[0];
                 newData.level = columns[1];
                 
-                /* 第3个格子是句子，用斜杠把它切成词块数组 */
-                newData.words = columns[2].Split('/'); 
+                /* 新增：读取第 3 列作为来源 */
+                newData.source = columns[2];
                 
-                /* int.Parse 的作用是把文字变成真正的数字 */
-                newData.priority = int.Parse(columns[3]);
+                /* 后面的格子全部往后挪了一位，索引都要加 1 */
+                /* 第 4 列：句子词块 */
+                newData.words = columns[3].Split('/'); 
                 
-                /* 用空格切开包含的词，放进列表里 */
-                newData.mustInclude = new List<string>(columns[4].Split(' '));
-                newData.mustNotInclude = new List<string>(columns[5].Split(' '));
+                /* 第 5 列：优先级 */
+                newData.priority = int.Parse(columns[4]);
                 
-                /* 继续读取数值变动 */
-                newData.panicChange = int.Parse(columns[6]);
-                newData.arroganceChange = int.Parse(columns[7]);
-                newData.friendlinessChange = int.Parse(columns[8]);
-                newData.accuracyChange = int.Parse(columns[9]);
+                /* 第 6、7 列：包含与不包含 */
+                newData.mustInclude = new List<string>(columns[5].Split(' '));
+                newData.mustNotInclude = new List<string>(columns[6].Split(' '));
                 
-                newData.feedback = columns[10];
+                /* 第 8, 9, 10, 11 列：数值变动 */
+                newData.panicChange = int.Parse(columns[7]);
+                newData.arroganceChange = int.Parse(columns[8]);
+                newData.friendlinessChange = int.Parse(columns[9]);
+                newData.accuracyChange = int.Parse(columns[10]);
+                
+                /* 第 12 列：反馈内容 */
+                newData.feedback = columns[11];
 
-                /* 把填好数据的图纸，放进大箱子里保存起来 */
                 allMessages.Add(newData);
             }
+
         }
         
         Debug.Log("数据读取完毕！成功存入 " + allMessages.Count + " 条电报数据。");
