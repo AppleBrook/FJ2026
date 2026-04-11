@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: "\u534A\u4EBA\u9A6C\u5EA7\u5916\u661F\u4EBA"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddc1ad4e036c76a449430c1abd487051, type: 2}
-  m_sharedMaterial: {fileID: -1078691774519558872, guid: ddc1ad4e036c76a449430c1abd487051, type: 2}
+  m_sharedMaterial: {fileID: 5205985099644951752, guid: ddc1ad4e036c76a449430c1abd487051, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -3,19 +3,21 @@ using System.Collections.Generic;
 
 public class CSVImporter : MonoBehaviour
 {
-    /* 这是一个空箱子，准备用来装我们翻译好的所有表格数据 */
-    public List<MessageData> allMessages = new List<MessageData>();
+    // 1. 新增单例，方便其他脚本随时找它要数据
+    public static CSVImporter Instance;
 
-    /* 这是一个插槽，以后我们会在Unity面板里把表格文件拖进去 */
+    public List<MessageData> allMessages = new List<MessageData>();
     public TextAsset csvFile;
 
-    /* 游戏刚启动时，就会自动呼叫读取功能 */
-    void Start()
+    // 2. 把原来的 Start 换成 Awake，确保数据在游戏加载的第一秒就准备好
+    void Awake()
     {
+        Instance = this;
         LoadData();
     }
 
-public void LoadData()
+
+    public void LoadData()
     {
         /* 先检查一下插槽里有没有放文件 */
         if (csvFile == null)
@@ -79,5 +81,10 @@ public void LoadData()
         }
         
         Debug.Log("数据读取完毕！成功存入 " + allMessages.Count + " 条电报数据。");
+    }
+
+    public List<MessageData> GetRulesByID(string targetID)
+    {
+        return allMessages.FindAll(m => m.id == targetID);
     }
 }

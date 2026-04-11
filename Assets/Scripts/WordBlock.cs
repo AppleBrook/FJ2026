@@ -20,6 +20,12 @@ public class WordBlock : MonoBehaviour
     // 这个函数等下用来绑定鼠标点击事件
     public void ToggleSelection()
     {
+        // 【新增核心限制】：如果我现在还没被选上，且桌面上已经选满 5 个了，直接拒绝！
+        if (!isSelected && WordBlockManager.Instance.GetSelectedWordCount() >= 5)
+        {
+            Debug.Log("超载警告：最多只能选择 5 个词语！");
+            return; 
+        }
         // 状态反转：如果是 false 就变 true，如果是 true 就变 false
         isSelected = !isSelected;
 
@@ -36,7 +42,7 @@ public class WordBlock : MonoBehaviour
         // 【新加的这一行】：每次被点击后，呼叫大管家重新拼凑句子！
         if (WordBlockManager.Instance != null)
         {
-            WordBlockManager.Instance.RebuildEarthSentence();
+            WordBlockManager.Instance.RebuildTargetSentence();
         }
     }
     

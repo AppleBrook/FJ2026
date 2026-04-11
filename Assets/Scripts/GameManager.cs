@@ -19,7 +19,9 @@ public class GameManager : MonoBehaviour
 
     /* 宠物状态：0是死亡，5是超级好 */
     public int petState = 3;
-
+    
+    // 在 GameManager.cs 里面找个空位加入这个函数
+    
     void Awake()
     {
         /* 确保游戏里始终只有一个大管家，不要有替身 */

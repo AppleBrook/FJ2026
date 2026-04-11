@@ -1,75 +1,95 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class WordBlockManager : MonoBehaviour
 {
-    public static WordBlockManager Instance; // 设为单例，方便词块随时呼叫它
+    public static WordBlockManager Instance;
+    public string currentSentenceID;
 
-    [Header("模具与容器")]
+    // 定义来源枚举
+    public enum MessageSource { Earth, Alien }
+    [Header("当前回合状态")]
+    public MessageSource currentSource; 
+
+    [Header("模具与插槽")]
     public GameObject wordBlockPrefab;
-    public Transform rightSideContainer; // 外星人区 (源)
-    public Transform leftSideContainer;  // 地球区 (目标)
+    public Transform leftSideContainer;  // 地球区
+    public Transform rightSideContainer; // 外星区
+    
+    [Header("发送按钮")]
+    public Button btnSendToEarth;
+    public Button btnSendToAlien;
 
-    // 极其重要：用一个列表把外星人区的词块按生成顺序全部装起来
-    private List<WordBlock> alienBlocks = new List<WordBlock>();
+    private List<WordBlock> sourceBlocks = new List<WordBlock>();
+    private Transform currentSourceContainer;
+    public Transform currentTargetContainer;
 
-    void Awake()
+    void Awake() { Instance = this; }
+
+    // 核心函数：设置新的一轮对话
+    public void SetupNewTurn(string sentence, MessageSource source, string id)
     {
-        Instance = this; 
-    }
+        currentSource = source;
+        currentSentenceID = id;
+        
+        // 1. 清空两侧所有旧词块
+        ClearContainer(leftSideContainer);
+        ClearContainer(rightSideContainer);
+        sourceBlocks.Clear();
 
-    void Start()
-    {
-        SpawnTestSentence();
-    }
+        // 2. 判定谁是“源”，谁是“目标”
+        if (source == MessageSource.Alien) {
+            currentSourceContainer = rightSideContainer;
+            currentTargetContainer = leftSideContainer;
+            btnSendToEarth.interactable = true;  // 只能发给地球
+            btnSendToAlien.interactable = false;
+        } else {
+            currentSourceContainer = leftSideContainer;
+            currentTargetContainer = rightSideContainer;
+            btnSendToEarth.interactable = false;
+            btnSendToAlien.interactable = true; // 只能发给外星人
+        }
 
-    void SpawnTestSentence()
-    {
-        string[] testWords = { "我们", "的", "首领", "想", "见", "你" };
-
-        foreach (string word in testWords)
-        {
-            GameObject newBlock = Instantiate(wordBlockPrefab, rightSideContainer);
-            
-            TextMeshProUGUI textComp = newBlock.GetComponentInChildren<TextMeshProUGUI>();
-            if (textComp != null) textComp.text = word;
-
-            // 把每个生成出来的词块脚本，按顺序塞进列表里记住
-            WordBlock blockScript = newBlock.GetComponent<WordBlock>();
-            if (blockScript != null)
-            {
-                alienBlocks.Add(blockScript);
-            }
+        // 3. 生成原始词块
+        string[] words = sentence.Split(' ');
+        foreach (string w in words) {
+            GameObject newBlock = Instantiate(wordBlockPrefab, currentSourceContainer);
+            newBlock.GetComponentInChildren<TextMeshProUGUI>().text = w;
+            WordBlock script = newBlock.GetComponent<WordBlock>();
+            sourceBlocks.Add(script);
         }
     }
 
-    // 核心算法：每次有词块被点击，就重新刷新一次地球区的显示
-    public void RebuildEarthSentence()
-    {
-        // 1. 拆除地球区现有的所有旧词块（清空画板）
-        foreach (Transform child in leftSideContainer)
-        {
-            Destroy(child.gameObject);
-        }
+    private void ClearContainer(Transform container) {
+        foreach (Transform child in container) Destroy(child.gameObject);
+    }
 
-        // 2. 按照我们在列表里记住的“原始顺序”，逐个检查外星人区的词块
-        foreach (WordBlock block in alienBlocks)
-        {
-            // 3. 如果这个词块处于“被选中”状态
-            if (block.isSelected == true)
-            {
-                // 4. 就在地球区克隆一个一模一样的外壳
-                GameObject cloneBlock = Instantiate(wordBlockPrefab, leftSideContainer);
+    // 当词块被点击时，由 WordBlock 脚本呼叫
+    public void RebuildTargetSentence()
+    {
+        ClearContainer(currentTargetContainer);
+
+        foreach (WordBlock block in sourceBlocks) {
+            if (block.isSelected) {
+                GameObject clone = Instantiate(wordBlockPrefab, currentTargetContainer);
+                clone.GetComponentInChildren<TextMeshProUGUI>().text = block.GetComponentInChildren<TextMeshProUGUI>().text;
                 
-                // 把字原封不动抄过来
-                cloneBlock.GetComponentInChildren<TextMeshProUGUI>().text = block.GetComponentInChildren<TextMeshProUGUI>().text;
-
-                // 【精髓】：剥夺克隆体的交互能力！把它身上的 Button 和 WordBlock 脚本全删了
-                // 让它变成一块只能看、不能点的“死木头”，彻底断绝套娃 Bug！
-                Destroy(cloneBlock.GetComponent<UnityEngine.UI.Button>());
-                Destroy(cloneBlock.GetComponent<WordBlock>());
+                // 禁用克隆体的交互
+                Destroy(clone.GetComponent<Button>());
+                Destroy(clone.GetComponent<WordBlock>());
             }
         }
+    }
+    
+    // 用来统计现在选了几个词
+    public int GetSelectedWordCount()
+    {
+        int count = 0;
+        foreach (var block in sourceBlocks) {
+            if (block.isSelected) count++;
+        }
+        return count;
     }
 }
