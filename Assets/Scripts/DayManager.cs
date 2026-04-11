@@ -18,19 +18,31 @@ public class DayManager : MonoBehaviour
     public GameObject panelDesktop; 
     public GameObject panelEmail;   
 
+    // 【新增】把工作台的三个大块放进来
+    [Header("UI：工作台系统 (需要隐藏的部分)")]
+    public GameObject topBar;
+    public GameObject middleDisplay;
+    public GameObject centerZone;
+
     [Header("UI：下班结算系统")]
     public GameObject panelEndOfDay;      
-    public GameObject btnNextLine;        // 隐形的全屏点击按钮
-    public GameObject btnNextDay;         // 进入下一天按钮
-    public TextMeshProUGUI txtVoiceLog;   // 语音文本显示框
+    public GameObject btnNextLine;        
+    public GameObject btnNextDay;         
+    public TextMeshProUGUI txtVoiceLog;   
 
     void Awake() { Instance = this; }
 
     void Start()
     {
+        // 1. 游戏刚启动：只显示桌面。隐藏邮件、下班面板
         if (panelDesktop != null) panelDesktop.SetActive(true);
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
+
+        // 2. 【核心新增】游戏刚启动时，把冷冰冰的工作台全藏起来！
+        if (topBar != null) topBar.SetActive(false);
+        if (middleDisplay != null) middleDisplay.SetActive(false);
+        if (centerZone != null) centerZone.SetActive(false);
     }
 
     public void OpenEmail() { if (panelEmail != null) panelEmail.SetActive(true); }
@@ -39,6 +51,12 @@ public class DayManager : MonoBehaviour
     {
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelDesktop != null) panelDesktop.SetActive(false); 
+
+        // 【核心新增】看完邮件，点击“开始工作”后，瞬间唤醒工作台！
+        if (topBar != null) topBar.SetActive(true);
+        if (middleDisplay != null) middleDisplay.SetActive(true);
+        if (centerZone != null) centerZone.SetActive(true);
+
         StartDay(); 
     }
 
