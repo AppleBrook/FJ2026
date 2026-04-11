@@ -18,7 +18,6 @@ public class DayManager : MonoBehaviour
     public GameObject panelDesktop; 
     public GameObject panelEmail;   
 
-    // 【新增】把工作台的三个大块放进来
     [Header("UI：工作台系统 (需要隐藏的部分)")]
     public GameObject topBar;
     public GameObject middleDisplay;
@@ -39,7 +38,7 @@ public class DayManager : MonoBehaviour
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
-        // 2. 【核心新增】游戏刚启动时，把冷冰冰的工作台全藏起来！
+        // 2. 游戏刚启动时，把冷冰冰的工作台全藏起来！
         if (topBar != null) topBar.SetActive(false);
         if (middleDisplay != null) middleDisplay.SetActive(false);
         if (centerZone != null) centerZone.SetActive(false);
@@ -52,7 +51,7 @@ public class DayManager : MonoBehaviour
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelDesktop != null) panelDesktop.SetActive(false); 
 
-        // 【核心新增】看完邮件，点击“开始工作”后，瞬间唤醒工作台！
+        // 看完邮件，点击“开始工作”后，瞬间唤醒工作台！
         if (topBar != null) topBar.SetActive(true);
         if (middleDisplay != null) middleDisplay.SetActive(true);
         if (centerZone != null) centerZone.SetActive(true);
@@ -95,22 +94,42 @@ public class DayManager : MonoBehaviour
     // ================== 下班结算演出逻辑 ==================
     private void StartVoiceLogSequence()
     {
-        // 1. 如果是第三天结束，没有语音，直接大结局！
+        // ================= 第二类：第三天结算结局（熬过三天后触发） =================
         if (currentDayIndex >= 3)
         {
-            Debug.Log("<color=red>★★★ 第 3 天结束，触发最终结局审判！★★★</color>");
-            // TODO: 第四阶段在这里加入 SceneManager.LoadScene("EndingScene");
+            // 【已替换】默认结局 H：庸人的幸存
+            string finalEnding = "End_H"; 
+
+            int p = GameManager.Instance.panic;
+            int a = GameManager.Instance.arrogance;
+            int f = GameManager.Instance.friendliness;
+
+            // 结局 E：【共荣】
+            if (p >= 50 && p < 70 && a >= 50 && a < 70 && f >= 80) {
+                finalEnding = "End_E";
+            }
+            // 结局 F：【黄金笼中鸟】
+            else if (p < 50 && a <= 30 && f >= 60) {
+                finalEnding = "End_F";
+            }
+            // 结局 G：【永夜铁幕】
+            else if ((a >= 70 || p >= 70) && f < 40) {
+                finalEnding = "End_G";
+            }
+
+            // 直接触发结局大清算
+            GameManager.Instance.TriggerEnding(finalEnding);
             return;
         }
 
-        // 2. 否则，打开结算面板
+        // --- 否则，打开平时的下班结算面板 ---
         if (panelEndOfDay != null) panelEndOfDay.SetActive(true);
-        if (btnNextDay != null) btnNextDay.SetActive(false); // 隐藏下一天按钮
-        if (btnNextLine != null) btnNextLine.SetActive(true); // 激活点击按钮
+        if (btnNextDay != null) btnNextDay.SetActive(false); 
+        if (btnNextLine != null) btnNextLine.SetActive(true); 
 
         currentVoiceLogs.Clear();
-        int acc = GameManager.Instance.accuracy; // 获取今天的准确率
-
+        int acc = GameManager.Instance.accuracy;
+        
         // ==========================================
         // 第一部分：长官通讯 (每天固定先播长官)
         // ==========================================
@@ -200,28 +219,24 @@ public class DayManager : MonoBehaviour
     {
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
-        // 处理宠物状态
+        // 严格按照“>60加1，反之减1”的规则更新宠物状态
         if (GameManager.Instance.accuracy >= 60) {
             GameManager.Instance.petState++;
-            Debug.Log("翻译精准！宠物状态提升！");
-        } else if (GameManager.Instance.accuracy < 30) {
+        } else {
             GameManager.Instance.petState--;
-            Debug.Log("翻译糟糕！宠物状态下降！");
         }
 
-        GameManager.Instance.ResetDailyStats(); // 重置血条等状态
-        currentDayIndex++; // 天数推进
+        // 保证宠物状态最低不小于0
+        if (GameManager.Instance.petState < 0) GameManager.Instance.petState = 0;
+        
+        // 宠物状态更新后，检测一下会不会引发宠物死亡结局（结局D）
+        GameManager.Instance.CheckInstantDeath();
 
-        // 检查是否通关
-        if (currentDayIndex > 3)
-        {
-            Debug.Log("<color=red>★★★ 第 3 天结束，触发最终结局审判！★★★</color>");
-            // TODO: 第四阶段在这里加入 SceneManager.LoadScene("EndingScene");
-        }
-        else
-        {
-            // 【核心修正】：不再回桌面！直接无缝启动新一天的翻译流水线！
-            StartDay();
-        }
+        // 重置血条等状态，天数推进
+        GameManager.Instance.ResetDailyStats(); 
+        currentDayIndex++; 
+
+        // 不再回桌面，直接开始第二天/第三天的新流水线！
+        StartDay();
     }
 }
