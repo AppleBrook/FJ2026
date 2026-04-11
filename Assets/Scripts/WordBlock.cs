@@ -8,7 +8,7 @@ public class WordBlock : MonoBehaviour
 
     private Image backgroundImage;  // 背景图组件
     private Color normalColor = Color.white; // 默认颜色：白
-    private Color selectedColor = Color.green; // 选中颜色：黄（测试用，以后换图片）
+    private Color selectedColor = Color.gray; // 选中颜色：黄（测试用，以后换图片）
 
     void Awake()
     {
