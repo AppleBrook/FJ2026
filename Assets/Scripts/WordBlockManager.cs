@@ -24,13 +24,11 @@ public class WordBlockManager : MonoBehaviour
     [Header("阵营美术图：地球")]
     public Sprite earthNormalSprite;
     public Sprite earthSelectedSprite;
-    /* ========== 新增：地球文字颜色 ========== */
     public Color earthTextColor = Color.black; 
 
     [Header("阵营美术图：外星")]
     public Sprite alienNormalSprite;
     public Sprite alienSelectedSprite;
-    /* ========== 新增：外星文字颜色 ========== */
     public Color alienTextColor = Color.white; 
 
     private List<WordBlock> sourceBlocks = new List<WordBlock>();
@@ -62,8 +60,6 @@ public class WordBlockManager : MonoBehaviour
 
         Sprite srcNormal = (source == MessageSource.Earth) ? earthNormalSprite : alienNormalSprite;
         Sprite srcSelected = (source == MessageSource.Earth) ? earthSelectedSprite : alienSelectedSprite;
-        
-        /* 新增：判断源头该用什么文字颜色 */
         Color srcTextColor = (source == MessageSource.Earth) ? earthTextColor : alienTextColor;
 
         string[] words = sentence.Split(' ');
@@ -71,7 +67,6 @@ public class WordBlockManager : MonoBehaviour
             GameObject newBlock = Instantiate(wordBlockPrefab, currentSourceContainer);
             WordBlock script = newBlock.GetComponent<WordBlock>();
             
-            /* 修改：把文字颜色也传进去！ */
             script.Initialize(w, srcNormal, srcSelected, srcTextColor); 
             
             sourceBlocks.Add(script);
@@ -87,8 +82,6 @@ public class WordBlockManager : MonoBehaviour
         ClearContainer(currentTargetContainer);
 
         Sprite targetNormal = (currentSource == MessageSource.Earth) ? alienNormalSprite : earthNormalSprite;
-        
-        /* 新增：判断目标区域（翻译区）该用什么文字颜色 */
         Color targetTextColor = (currentSource == MessageSource.Earth) ? alienTextColor : earthTextColor;
 
         foreach (WordBlock block in sourceBlocks) {
@@ -97,7 +90,6 @@ public class WordBlockManager : MonoBehaviour
                 
                 TextMeshProUGUI cloneText = clone.GetComponentInChildren<TextMeshProUGUI>();
                 cloneText.text = block.word;
-                /* 新增：把克隆出来的文字颜色也改掉！ */
                 cloneText.color = targetTextColor;
                 
                 Image cloneImg = clone.GetComponent<Image>();
@@ -105,8 +97,21 @@ public class WordBlockManager : MonoBehaviour
                     cloneImg.sprite = targetNormal;
                 }
                 
-                Destroy(clone.GetComponent<Button>());
+                /* 新增核心逻辑：配置克隆体的遥控器 */
+                
+                // 1. 克隆体不再需要原本的 WordBlock 脚本了，把它删掉以防冲突
                 Destroy(clone.GetComponent<WordBlock>());
+                
+                // 2. 给克隆体加上我们新写的遥控器脚本
+                CloneBlock cloneScript = clone.AddComponent<CloneBlock>();
+                
+                // 3. 把本体的引用塞给遥控器，让它知道自己该控制谁
+                cloneScript.originalBlock = block;
+                
+                // 4. 拿到克隆体身上的按钮组件，让它在被点击时呼叫遥控器
+                Button cloneBtn = clone.GetComponent<Button>();
+                cloneBtn.onClick.RemoveAllListeners(); /* 清空原本从预制体带过来的点击事件 */
+                cloneBtn.onClick.AddListener(() => cloneScript.OnCloneClicked()); /* 绑定新事件 */
             }
         }
     }

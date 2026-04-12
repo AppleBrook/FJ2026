@@ -6,9 +6,12 @@ using System.Linq;
 public class DayManager : MonoBehaviour
 {
     public static DayManager Instance;
+    
+    /* 记录当前的自动跳转倒计时，方便我们随时掐断它 */
+    private Coroutine autoAdvanceCoroutine;
 
     private Queue<string> dailyMessageQueue = new Queue<string>();
-    private Queue<string> currentVoiceLogs = new Queue<string>(); // 【新增】用来排队播放语音文本
+    private Queue<string> currentVoiceLogs = new Queue<string>(); 
     
     [Header("关卡管理")]
     public int currentDayIndex = 1; 
@@ -33,12 +36,10 @@ public class DayManager : MonoBehaviour
 
     void Start()
     {
-        // 1. 游戏刚启动：只显示桌面。隐藏邮件、下班面板
         if (panelDesktop != null) panelDesktop.SetActive(true);
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
-        // 2. 游戏刚启动时，把冷冰冰的工作台全藏起来！
         if (topBar != null) topBar.SetActive(false);
         if (middleDisplay != null) middleDisplay.SetActive(false);
         if (centerZone != null) centerZone.SetActive(false);
@@ -51,7 +52,6 @@ public class DayManager : MonoBehaviour
         if (panelEmail != null) panelEmail.SetActive(false);
         if (panelDesktop != null) panelDesktop.SetActive(false); 
 
-        // 看完邮件，点击“开始工作”后，瞬间唤醒工作台！
         if (topBar != null) topBar.SetActive(true);
         if (middleDisplay != null) middleDisplay.SetActive(true);
         if (centerZone != null) centerZone.SetActive(true);
@@ -84,14 +84,12 @@ public class DayManager : MonoBehaviour
 
             WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
 
-            /* 新增：呼叫视觉管理器，让它把不要的按钮塞到后面去！*/
             if (ButtonVisualManager.Instance != null) {
                 ButtonVisualManager.Instance.UpdateButtons(src);
             }
         }
         else
         {
-            // 队列空了，进入下班语音环节！
             StartVoiceLogSequence();
         }
     }
@@ -99,35 +97,28 @@ public class DayManager : MonoBehaviour
     // ================== 下班结算演出逻辑 ==================
     private void StartVoiceLogSequence()
     {
-        // ================= 第二类：第三天结算结局（熬过三天后触发） =================
         if (currentDayIndex >= 3)
         {
-            // 【已替换】默认结局 H：庸人的幸存
             string finalEnding = "End_H"; 
 
             int p = GameManager.Instance.panic;
             int a = GameManager.Instance.arrogance;
             int f = GameManager.Instance.friendliness;
 
-            // 结局 E：【共荣】
             if (p >= 50 && p < 70 && a >= 50 && a < 70 && f >= 80) {
                 finalEnding = "End_E";
             }
-            // 结局 F：【黄金笼中鸟】
             else if (p < 50 && a <= 30 && f >= 60) {
                 finalEnding = "End_F";
             }
-            // 结局 G：【永夜铁幕】
             else if ((a >= 70 || p >= 70) && f < 40) {
                 finalEnding = "End_G";
             }
 
-            // 直接触发结局大清算
             GameManager.Instance.TriggerEnding(finalEnding);
             return;
         }
 
-        // --- 否则，打开平时的下班结算面板 ---
         if (panelEndOfDay != null) panelEndOfDay.SetActive(true);
         if (btnNextDay != null) btnNextDay.SetActive(false); 
         if (btnNextLine != null) btnNextLine.SetActive(true); 
@@ -135,9 +126,6 @@ public class DayManager : MonoBehaviour
         currentVoiceLogs.Clear();
         int acc = GameManager.Instance.accuracy;
         
-        // ==========================================
-        // 第一部分：长官通讯 (每天固定先播长官)
-        // ==========================================
         currentVoiceLogs.Enqueue("【……语音通讯接入中……】");
         currentVoiceLogs.Enqueue("【已接入：地球联合军指挥部】");
 
@@ -151,12 +139,8 @@ public class DayManager : MonoBehaviour
         currentVoiceLogs.Enqueue("【语音通讯已结束。】");
 
 
-        // ==========================================
-        // 第二部分：家人通讯 (根据天数区分妻子/女儿)
-        // ==========================================
         if (currentDayIndex == 1)
         {
-            // ---------- Day 1: 妻子 ----------
             currentVoiceLogs.Enqueue("【……语音通讯接入中……】");
             currentVoiceLogs.Enqueue("【已接入：妻子】");
 
@@ -177,7 +161,6 @@ public class DayManager : MonoBehaviour
         }
         else if (currentDayIndex == 2)
         {
-            // ---------- Day 2: 女儿 ----------
             currentVoiceLogs.Enqueue("【……语音通讯接入中……】");
             currentVoiceLogs.Enqueue("【已接入：宝贝】");
 
@@ -196,52 +179,61 @@ public class DayManager : MonoBehaviour
             }
         }
 
-        // 统一收尾
         currentVoiceLogs.Enqueue("【语音通讯已结束。】");
 
-        // 4. 开始播放第一句话
         PlayNextVoiceLog();
     }
 
-    // 每次点击屏幕，播放下一句话
     public void PlayNextVoiceLog()
     {
+        /* 新增核心 1：玩家手动点击时，立刻掐断自动倒计时 */
+        if (autoAdvanceCoroutine != null)
+        {
+            StopCoroutine(autoAdvanceCoroutine);
+            autoAdvanceCoroutine = null;
+        }
+
         if (currentVoiceLogs.Count > 0)
         {
-            txtVoiceLog.text = currentVoiceLogs.Dequeue();
+            string currentLine = currentVoiceLogs.Dequeue();
+            txtVoiceLog.text = currentLine;
+
+            /* 新增核心 2：识别系统提示语并开启 2 秒倒计时 */
+            if (currentLine.Contains("【") && currentLine.Contains("】"))
+            {
+                autoAdvanceCoroutine = StartCoroutine(AutoAdvanceVoiceLog());
+            }
         }
         else
         {
-            // 没话说了，弹出“进入下一天”按钮
             txtVoiceLog.text = "【通讯已切断】";
-            if (btnNextLine != null) btnNextLine.SetActive(false); // 关掉点击
-            if (btnNextDay != null) btnNextDay.SetActive(true);    // 显示下一天按钮
+            if (btnNextLine != null) btnNextLine.SetActive(false); 
+            if (btnNextDay != null) btnNextDay.SetActive(true);    
         }
     }
 
-    // 点击“进入下一天”按钮
     public void GoToNextDay()
     {
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
-        // 严格按照“>60加1，反之减1”的规则更新宠物状态
         if (GameManager.Instance.accuracy >= 60) {
             GameManager.Instance.petState++;
         } else {
             GameManager.Instance.petState--;
         }
 
-        // 保证宠物状态最低不小于0
         if (GameManager.Instance.petState < 0) GameManager.Instance.petState = 0;
         
-        // 宠物状态更新后，检测一下会不会引发宠物死亡结局（结局D）
         GameManager.Instance.CheckInstantDeath();
-
-        // 重置血条等状态，天数推进
         GameManager.Instance.ResetDailyStats(); 
         currentDayIndex++; 
 
-        // 不再回桌面，直接开始第二天/第三天的新流水线！
         StartDay();
+    }
+    
+    private System.Collections.IEnumerator AutoAdvanceVoiceLog()
+    {
+        yield return new WaitForSeconds(2f);
+        PlayNextVoiceLog(); 
     }
 }
