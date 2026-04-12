@@ -90,11 +90,41 @@ public class DayManager : MonoBehaviour
             WordBlockManager.MessageSource src = data.source == "外星人" ? 
                 WordBlockManager.MessageSource.Alien : WordBlockManager.MessageSource.Earth;
 
-            WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
+            // ================= 新增：波形图演出逻辑 =================
+            if (src == WordBlockManager.MessageSource.Alien)
+            {
+                // 计算时长：假设每个词块跳动 0.2 秒，用 Mathf.Clamp 强行把总时长限制在 0.5 秒 到 2.0 秒之间
+                int wordCount = data.words.Length;
+                float waveDuration = Mathf.Clamp(wordCount * 0.2f, 0.5f, 2.0f);
 
-            if (ButtonVisualManager.Instance != null) {
-                ButtonVisualManager.Instance.UpdateButtons(src);
+                // 呼叫波形图演出
+                if (WaveformEffect.Instance != null)
+                {
+                    // 使用 () => { ... } 语法，确保波形图播放完才执行里面的文字加载
+                    WaveformEffect.Instance.PlayWave(waveDuration, () => 
+                    {
+                        WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
+                        if (ButtonVisualManager.Instance != null) {
+                            ButtonVisualManager.Instance.UpdateButtons(src);
+                        }
+                    });
+                }
+                else
+                {
+                    // 兜底：如果忘了挂脚本，直接显示文字防卡死
+                    WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
+                    if (ButtonVisualManager.Instance != null) ButtonVisualManager.Instance.UpdateButtons(src);
+                }
             }
+            else
+            {
+                // 如果是地球发信，不需要波形图，直接显示文字
+                WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
+                if (ButtonVisualManager.Instance != null) {
+                    ButtonVisualManager.Instance.UpdateButtons(src);
+                }
+            }
+            // =========================================================
         }
         else
         {
