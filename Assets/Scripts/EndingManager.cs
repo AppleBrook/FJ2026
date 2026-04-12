@@ -3,15 +3,15 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using System.Collections.Generic; // 必须引入队列库
+using System.Collections.Generic; 
 
 public class EndingManager : MonoBehaviour
 {
     [Header("UI 绑定")]
     public Image cgImage;
     public TextMeshProUGUI endingText;
-    public GameObject btnReturnMenu; // 返回主菜单按钮
-    public GameObject btnNextLine;   // 【新增】隐形的全屏点击按钮
+    public GameObject btnReturnMenu; 
+    public GameObject btnNextLine;   
 
     [Header("结局 CG 图片 (按需拖入美术素材)")]
     public Sprite cg_End_A;
@@ -23,24 +23,42 @@ public class EndingManager : MonoBehaviour
     public Sprite cg_End_G;
     public Sprite cg_End_H;
 
-    // 存储当前结局文案的队列
     private Queue<string> endingLines = new Queue<string>();
 
     void Start()
     {
-        // 游戏刚进入结局时：隐藏返回按钮，激活点击按钮
+        // 游戏刚进入结局时：隐藏返回按钮
         if (btnReturnMenu != null) btnReturnMenu.SetActive(false);
-        if (btnNextLine != null) btnNextLine.SetActive(true);
+        
+        /* 核心修改 1：一开始把点击按钮和文字框都隐藏起来，防止玩家误触，并让画面保持干净 */
+        if (btnNextLine != null) btnNextLine.SetActive(false);
+        if (endingText != null) endingText.gameObject.SetActive(false);
 
-        // 获取结局 ID
         string id = string.IsNullOrEmpty(GlobalData.currentEndingID) ? "End_H" : GlobalData.currentEndingID;
         
         Debug.Log($"<color=cyan>正在展示结局：{id}</color>");
 
-        // 把文本装填进队列，并播放第一句
+        // 把文本装填进队列
         LoadEndingData(id);
+        
+        /* 核心修改 2：不再立刻播放第一句，而是开启 0.5 秒留白演出的协程 */
+        StartCoroutine(StartEndingSequence());
+    }
+
+    /* ================= 新增：0.5 秒留白演出协程 ================= */
+    private IEnumerator StartEndingSequence()
+    {
+        // 让玩家安静地欣赏 0.5 秒的纯净 CG 图
+        yield return new WaitForSeconds(0.5f);
+
+        // 时间到，激活文字框和全屏点击按钮
+        if (endingText != null) endingText.gameObject.SetActive(true);
+        if (btnNextLine != null) btnNextLine.SetActive(true);
+
+        // 正式播放第一句话
         PlayNextLine();
     }
+    /* ========================================================= */
 
     private void LoadEndingData(string endingID)
     {
@@ -116,7 +134,6 @@ public class EndingManager : MonoBehaviour
         }
     }
 
-    // 每次点击屏幕，播放下一句话
     public void PlayNextLine()
     {
         if (endingLines.Count > 0)
@@ -125,23 +142,20 @@ public class EndingManager : MonoBehaviour
         }
         else
         {
-            // 如果全部读完，关闭点击按钮，并触发延迟显示菜单的特效
             if (btnNextLine != null) btnNextLine.SetActive(false);
             StartCoroutine(ShowReturnMenuDelayed());
         }
     }
 
-    // 协程：等待 1 秒后出现按钮
     private IEnumerator ShowReturnMenuDelayed()
     {
         yield return new WaitForSeconds(1f);
         if (btnReturnMenu != null) btnReturnMenu.SetActive(true);
     }
 
-    // 绑定给“返回主菜单”按钮的函数
     public void ReturnToMainMenu()
     {
         GlobalData.currentEndingID = "";
-        SceneManager.LoadScene("GameScene"); // 确保你的主菜单场景叫 GameScene
+        SceneManager.LoadScene("GameScene"); 
     }
 }
