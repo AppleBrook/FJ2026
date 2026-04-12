@@ -83,6 +83,11 @@ public class DayManager : MonoBehaviour
                 WordBlockManager.MessageSource.Alien : WordBlockManager.MessageSource.Earth;
 
             WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
+
+            /* 新增：呼叫视觉管理器，让它把不要的按钮塞到后面去！*/
+            if (ButtonVisualManager.Instance != null) {
+                ButtonVisualManager.Instance.UpdateButtons(src);
+            }
         }
         else
         {
