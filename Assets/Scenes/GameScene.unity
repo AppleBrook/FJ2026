@@ -9037,7 +9037,7 @@ MonoBehaviour:
   arrogance: 50
   friendliness: 50
   accuracy: 50
-  petState: 3
+  petState: 2
 --- !u!4 &2061694721
 Transform:
   m_ObjectHideFlags: 0
