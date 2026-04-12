@@ -195,10 +195,14 @@ public class EndingManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        // 【修改点 2】用代码隔空呼叫存在于游戏里的声音管理器，播放 UI 声音
+        // 用代码隔空呼叫存在于游戏里的声音管理器
         if (AudioManager.Instance != null)
         {
+            // 播放点击音效
             AudioManager.Instance.PlaySFX(AudioManager.Instance.ui_Click);
+            
+            // 【新增这一句】：在切回主菜单前，重新让大喇叭播放日常 BGM！
+            AudioManager.Instance.PlayBGM(AudioManager.Instance.bgm_Gameplay);
         }
         
         GlobalData.currentEndingID = "";
