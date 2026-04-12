@@ -64,6 +64,10 @@ public class MessageSender : MonoBehaviour
             /* 核心改动 2：一旦匹配成功，立刻上锁！*/
             isProcessing = true; 
 
+            if (FeedbackUIManager.Instance != null) {
+                FeedbackUIManager.Instance.ShowFeedback(matchedRule.feedback);
+            }
+            
             Debug.Log($"匹配成功！触发优先级: {matchedRule.priority}");
             
             GameManager.Instance.ApplyStatChanges(
