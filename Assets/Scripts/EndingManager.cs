@@ -75,7 +75,7 @@ public class EndingManager : MonoBehaviour
 
             case "End_D":
                 if (cg_End_D != null) cgImage.sprite = cg_End_D;
-                endingLines.Enqueue("你的宠物死了。\n它的体温在你怀里一寸寸冷下去。");
+                endingLines.Enqueue("你无害的小植物死了。\n它柔软的草叶在你眼前慢慢枯萎。");
                 endingLines.Enqueue("今夜，你不关心人类。");
                 endingLines.Enqueue("你亲手结束了这场孤独的远征，\n一具无主躯壳在群星间悠悠漂浮。");
                 endingLines.Enqueue("今夜，宇宙热闹而寂寥。");

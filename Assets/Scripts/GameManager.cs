@@ -9,12 +9,12 @@ public class GameManager : MonoBehaviour
     public int panic = 50;
     public int arrogance = 50;
     public int friendliness = 50;
-    public int accuracy = 50;
+    /* 核心修改：每日初始准确率降为 35，增加难度与压迫感 */
+    public int accuracy = 35; 
     public int petState = 2; // 初始状态为2（正常）
 
     void Awake() { Instance = this; }
 
-    // 把名字改成了 ApplyStatChanges，解决 MessageSender 的报错
     public void ApplyStatChanges(int pChange, int aChange, int fChange, int accChange)
     {
         panic += pChange;
@@ -30,32 +30,30 @@ public class GameManager : MonoBehaviour
     public void CheckInstantDeath()
     {
         if (panic >= 100) {
-            TriggerEnding("End_A"); // 结局 A：【疯狂】（恐慌爆表）
+            TriggerEnding("End_A"); // 结局 A：【疯狂】
         }
         else if (arrogance >= 100) {
-            TriggerEnding("End_B"); // 结局 B：【傲慢与偏见】（傲慢爆表）
+            TriggerEnding("End_B"); // 结局 B：【傲慢与偏见】
         }
         else if (friendliness <= 0) {
-            TriggerEnding("End_C"); // 结局 C：【无效杂音】（友好度归零）
+            TriggerEnding("End_C"); // 结局 C：【无效杂音】
         }
         else if (petState <= 0) {
-            TriggerEnding("End_D"); // 结局 D：【今夜你不关心人类】（宠物死亡）
+            TriggerEnding("End_D"); // 结局 D：【今夜你不关心人类】（植物枯萎）
         }
     }
 
     public void ResetDailyStats()
     {
-        accuracy = 50; // 每天开始时准确率归位
+        /* 核心修改：每天开始时准确率重置为 35 */
+        accuracy = 35; 
     }
 
     public void TriggerEnding(string endingID)
     {
         Debug.Log($"<color=red>★★★ 触发结局：{endingID} ★★★</color>");
         
-        // 把结局ID存入超脱三界之外的 GlobalData
         GlobalData.currentEndingID = endingID;
-        
-        // 强行跳转到结局场景！
         SceneManager.LoadScene("EndingScene");
     }
 }

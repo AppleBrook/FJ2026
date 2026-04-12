@@ -7,7 +7,6 @@ public class DayManager : MonoBehaviour
 {
     public static DayManager Instance;
     
-    /* 记录当前的自动跳转倒计时，方便我们随时掐断它 */
     private Coroutine autoAdvanceCoroutine;
 
     private Queue<string> dailyMessageQueue = new Queue<string>();
@@ -21,7 +20,7 @@ public class DayManager : MonoBehaviour
     public GameObject panelDesktop; 
     public GameObject panelEmail;   
 
-    [Header("UI：工作台系统 (需要隐藏的部分)")]
+    [Header("UI：工作台系统")]
     public GameObject topBar;
     public GameObject middleDisplay;
     public GameObject centerZone;
@@ -105,15 +104,21 @@ public class DayManager : MonoBehaviour
             int a = GameManager.Instance.arrogance;
             int f = GameManager.Instance.friendliness;
 
-            if (p >= 50 && p < 70 && a >= 50 && a < 70 && f >= 80) {
+            /* 核心修改：采用阶梯式优先级判定，杜绝 Bug 与同时触发 */
+            
+            // 顺位 1：结局 E【共荣】（真·完美结局）
+            if (f >= 75 && p >= 40 && p <= 70 && a >= 40 && a <= 70) {
                 finalEnding = "End_E";
             }
-            else if (p < 50 && a <= 30 && f >= 60) {
+            // 顺位 2：结局 F【黄金笼中鸟】（丧权辱国结局）
+            else if (f >= 50 && a <= 35) {
                 finalEnding = "End_F";
             }
-            else if ((a >= 70 || p >= 70) && f < 40) {
+            // 顺位 3：结局 G【永夜铁幕】（高压对峙结局）
+            else if (f < 50 && (p >= 65 || a >= 65)) {
                 finalEnding = "End_G";
             }
+            // 顺位 4：结局 H【庸人的幸存】（自动作为默认保底）
 
             GameManager.Instance.TriggerEnding(finalEnding);
             return;
@@ -186,7 +191,6 @@ public class DayManager : MonoBehaviour
 
     public void PlayNextVoiceLog()
     {
-        /* 新增核心 1：玩家手动点击时，立刻掐断自动倒计时 */
         if (autoAdvanceCoroutine != null)
         {
             StopCoroutine(autoAdvanceCoroutine);
@@ -198,7 +202,6 @@ public class DayManager : MonoBehaviour
             string currentLine = currentVoiceLogs.Dequeue();
             txtVoiceLog.text = currentLine;
 
-            /* 新增核心 2：识别系统提示语并开启 2 秒倒计时 */
             if (currentLine.Contains("【") && currentLine.Contains("】"))
             {
                 autoAdvanceCoroutine = StartCoroutine(AutoAdvanceVoiceLog());
