@@ -190,20 +190,33 @@ public class EndingManager : MonoBehaviour
             case "End_G":
                 if (cg_End_G != null) cgImage.sprite = cg_End_G;
                 activeTextComponent = text_End_G;
-                endingLines.Enqueue("由于你的传信充满了火药味和虚张声势，\n地球和外星人都不敢轻举妄动。");
-                endingLines.Enqueue("太阳系边界布满森森军队，地球进入了长达数百年的“太空冷战”纪元，\n文明的所有资源全部流向军工。");
-                endingLines.Enqueue("你回到地球后，与家人在昏暗的防空洞中短暂重聚。\n没多久，你收到了新的入伍通知，走向星际战壕。");
-                endingLines.Enqueue("——结局 G：【永夜铁幕】——");
+                
+                // 第一页
+                endingLines.Enqueue("由于你的传信\n充满了火药味和虚张声势，\n地球和外星人都不敢轻举妄动。");
+                
+                // 第二页
+                endingLines.Enqueue("太阳系边界布满森森军队，\n地球进入了长达数百年的\n“太空冷战”纪元，\n文明的所有资源全部流向军工。");
+                
+                // 第三页
+                endingLines.Enqueue("你回到地球后，\n与家人在昏暗的防空洞中\n短暂重聚。\n\n没多久，你收到了新的入伍通知，\n走向星际战壕。");
+                
+                // 第四页
+                endingLines.Enqueue("— 结局 G：【永夜铁幕】 —");
                 break;
 
             case "End_H":
             default:
                 if (cg_End_H != null) cgImage.sprite = cg_End_H;
                 activeTextComponent = text_End_H;
-                endingLines.Enqueue("这三天的交流像是一场跨服聊天，双方都没太搞懂对方的意思，但也懒得深究。");
-                endingLines.Enqueue("外星舰队觉得地球无聊透顶，调转船头飞向了半人马座。");
-                endingLines.Enqueue("你被上级以“业务能力低下”为由解雇，回家种地了。\n在贫瘠的黄土地上，你偶尔抬头看向星空，会怀疑那几天只是你因孤独而产生的一场幻觉。");
-                endingLines.Enqueue("——结局 H：【庸人的幸存】——");
+                
+                // 第一页
+                endingLines.Enqueue("这三天的交流像是一场跨服聊天，\n双方都没太搞懂对方的意思，\n但也懒得深究。\n\n外星舰队觉得地球无聊透顶，\n调转船头飞向了半人马座。");
+                
+                // 第二页
+                endingLines.Enqueue("你被上级以“业务能力低下”\n为由解雇，回家种地了。\n\n在贫瘠的黄土地上，\n你偶尔抬头看向星空，\n会怀疑那几天只是你因孤独而产生的一场幻觉。");
+                
+                // 第三页
+                endingLines.Enqueue("\n— 结局 H：【庸人的幸存】 —");
                 break;
         }
     }
