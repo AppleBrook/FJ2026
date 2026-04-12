@@ -27,20 +27,26 @@ public class GameManager : MonoBehaviour
     }
 
     // ================= 第一类：中途暴毙结局（随时触发） =================
-    public void CheckInstantDeath()
+    public bool CheckInstantDeath()
     {
         if (panic >= 100) {
-            TriggerEnding("End_A"); // 结局 A：【疯狂】
+            TriggerEnding("End_A"); 
+            return true; // 触发结局后，返回 true
         }
         else if (arrogance >= 100) {
-            TriggerEnding("End_B"); // 结局 B：【傲慢与偏见】
+            TriggerEnding("End_B"); 
+            return true;
         }
         else if (friendliness <= 0) {
-            TriggerEnding("End_C"); // 结局 C：【无效杂音】
+            TriggerEnding("End_C"); 
+            return true;
         }
         else if (petState <= 0) {
-            TriggerEnding("End_D"); // 结局 D：【今夜你不关心人类】（植物枯萎）
+            TriggerEnding("End_D"); 
+            return true;
         }
+        
+        return false; // 如果活得好好的，返回 false
     }
 
     public void ResetDailyStats()

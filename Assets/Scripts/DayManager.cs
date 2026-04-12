@@ -273,15 +273,34 @@ public class DayManager : MonoBehaviour
     {
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
+        // 1. 结算宠物数值
         if (GameManager.Instance.accuracy >= 60) {
             GameManager.Instance.petState++;
         } else {
             GameManager.Instance.petState--;
         }
 
+        // 限制最大和最小值（防止超出美术做的三种状态）
+        if (GameManager.Instance.petState > 3) GameManager.Instance.petState = 3;
         if (GameManager.Instance.petState < 0) GameManager.Instance.petState = 0;
         
-        GameManager.Instance.CheckInstantDeath();
+        // ================= 新增：通知动画机换动作！ =================
+        if (PetManager.Instance != null) {
+            PetManager.Instance.UpdatePetAnimation();
+        }
+        // =========================================================
+        
+        // ================= 新增：死亡急刹车机制！ ===================
+        // 检查刚刚扣完血后，宠物是不是死了？或者其他数值爆表了？
+        if (GameManager.Instance.CheckInstantDeath() == true) 
+        {
+            // 如果死了，立刻 return 踩死刹车！
+            // 绝对不让代码往下执行，这样就不会强行进入第三天了！
+            return; 
+        }
+        // =========================================================
+
+        // 只有安全活下来，才会重置准确率并进入下一天
         GameManager.Instance.ResetDailyStats(); 
         currentDayIndex++; 
 
