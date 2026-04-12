@@ -43,19 +43,18 @@ public class EndingManager : MonoBehaviour
         string id = string.IsNullOrEmpty(GlobalData.currentEndingID) ? "End_H" : GlobalData.currentEndingID;
         
         Debug.Log($"<color=cyan>正在展示结局：{id}</color>");
-
+        
         /* ================= 全局音效接管 ================= */
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.StopBGM(); // 停掉日常工作 BGM
-            
+            // 注意这里：把所有的 PlaySFX 换成了 PlayBGM！
             switch(id)
             {
-                case "End_E": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_E); break;
-                case "End_H": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_H); break;
-                case "End_G": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_G); break;
-                case "End_F": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_F); break;
-                default: AudioManager.Instance.PlaySFX(AudioManager.Instance.end_BE); break; 
+                case "End_E": AudioManager.Instance.PlayBGM(AudioManager.Instance.end_E); break;
+                case "End_H": AudioManager.Instance.PlayBGM(AudioManager.Instance.end_H); break;
+                case "End_G": AudioManager.Instance.PlayBGM(AudioManager.Instance.end_G); break;
+                case "End_F": AudioManager.Instance.PlayBGM(AudioManager.Instance.end_F); break;
+                default: AudioManager.Instance.PlayBGM(AudioManager.Instance.end_BE); break; 
             }
         }
         /* ====================================================== */
