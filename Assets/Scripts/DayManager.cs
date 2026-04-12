@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -8,7 +9,6 @@ public class DayManager : MonoBehaviour
     public static DayManager Instance;
     
     private Coroutine autoAdvanceCoroutine;
-
     private Queue<string> dailyMessageQueue = new Queue<string>();
     private Queue<string> currentVoiceLogs = new Queue<string>(); 
     
@@ -30,6 +30,15 @@ public class DayManager : MonoBehaviour
     public GameObject btnNextLine;        
     public GameObject btnNextDay;         
     public TextMeshProUGUI txtVoiceLog;   
+
+    /* ========== 新增：打字机核心变量 ========== */
+    [Header("打字机设置")]
+    public float typingSpeed = 0.05f; 
+    
+    private bool isTyping = false;          
+    private string currentLineText = "";    
+    private Coroutine typingCoroutine;      
+    /* ========================================= */
 
     void Awake() { Instance = this; }
 
@@ -93,7 +102,6 @@ public class DayManager : MonoBehaviour
         }
     }
 
-    // ================== 下班结算演出逻辑 ==================
     private void StartVoiceLogSequence()
     {
         if (currentDayIndex >= 3)
@@ -104,21 +112,15 @@ public class DayManager : MonoBehaviour
             int a = GameManager.Instance.arrogance;
             int f = GameManager.Instance.friendliness;
 
-            /* 核心修改：采用阶梯式优先级判定，杜绝 Bug 与同时触发 */
-            
-            // 顺位 1：结局 E【共荣】（真·完美结局）
             if (f >= 75 && p >= 40 && p <= 70 && a >= 40 && a <= 70) {
                 finalEnding = "End_E";
             }
-            // 顺位 2：结局 F【黄金笼中鸟】（丧权辱国结局）
             else if (f >= 50 && a <= 35) {
                 finalEnding = "End_F";
             }
-            // 顺位 3：结局 G【永夜铁幕】（高压对峙结局）
             else if (f < 50 && (p >= 65 || a >= 65)) {
                 finalEnding = "End_G";
             }
-            // 顺位 4：结局 H【庸人的幸存】（自动作为默认保底）
 
             GameManager.Instance.TriggerEnding(finalEnding);
             return;
@@ -142,7 +144,6 @@ public class DayManager : MonoBehaviour
             currentVoiceLogs.Enqueue("你的工作完成得非常糟糕!\n地球失望地看着你和你的家人。");
         }
         currentVoiceLogs.Enqueue("【语音通讯已结束。】");
-
 
         if (currentDayIndex == 1)
         {
@@ -191,21 +192,30 @@ public class DayManager : MonoBehaviour
 
     public void PlayNextVoiceLog()
     {
+        /* --- 如果正在倒计时，立刻掐断 --- */
         if (autoAdvanceCoroutine != null)
         {
             StopCoroutine(autoAdvanceCoroutine);
             autoAdvanceCoroutine = null;
         }
 
+        /* --- 核心修改：防误触瞬间显示 --- */
+        if (isTyping)
+        {
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+            txtVoiceLog.text = currentLineText;
+            isTyping = false;
+            
+            // 瞬间显示完毕后，如果是系统提示语，开启 2 秒倒计时
+            CheckForAutoAdvance(currentLineText);
+            return; 
+        }
+
+        /* --- 原本的读取下一句逻辑 --- */
         if (currentVoiceLogs.Count > 0)
         {
-            string currentLine = currentVoiceLogs.Dequeue();
-            txtVoiceLog.text = currentLine;
-
-            if (currentLine.Contains("【") && currentLine.Contains("】"))
-            {
-                autoAdvanceCoroutine = StartCoroutine(AutoAdvanceVoiceLog());
-            }
+            currentLineText = currentVoiceLogs.Dequeue();
+            typingCoroutine = StartCoroutine(TypeText(currentLineText));
         }
         else
         {
@@ -213,6 +223,42 @@ public class DayManager : MonoBehaviour
             if (btnNextLine != null) btnNextLine.SetActive(false); 
             if (btnNextDay != null) btnNextDay.SetActive(true);    
         }
+    }
+
+    /* ========== 新增：打字机协程 ========== */
+    private IEnumerator TypeText(string lineToType)
+    {
+        isTyping = true;
+        txtVoiceLog.text = ""; 
+
+        foreach (char letter in lineToType.ToCharArray())
+        {
+            txtVoiceLog.text += letter;
+            yield return new WaitForSeconds(typingSpeed); 
+        }
+
+        isTyping = false;
+        
+        // 打字正常结束时，检查是否需要自动推进
+        CheckForAutoAdvance(lineToType);
+    }
+
+    /* ========== 新增：检查是否需要自动推进的函数 ========== */
+    private void CheckForAutoAdvance(string line)
+    {
+        // 只有当整句话都显示完毕后，且包含【】时，才开始 2 秒倒计时
+        if (line.Contains("【") && line.Contains("】"))
+        {
+             // 确保在开启新的协程前，把旧的清理掉，虽然前面已经清理过，但为了安全起见
+            if (autoAdvanceCoroutine != null) StopCoroutine(autoAdvanceCoroutine);
+            autoAdvanceCoroutine = StartCoroutine(AutoAdvanceVoiceLog());
+        }
+    }
+
+    private IEnumerator AutoAdvanceVoiceLog()
+    {
+        yield return new WaitForSeconds(2f);
+        PlayNextVoiceLog(); 
     }
 
     public void GoToNextDay()
@@ -232,11 +278,5 @@ public class DayManager : MonoBehaviour
         currentDayIndex++; 
 
         StartDay();
-    }
-    
-    private System.Collections.IEnumerator AutoAdvanceVoiceLog()
-    {
-        yield return new WaitForSeconds(2f);
-        PlayNextVoiceLog(); 
     }
 }

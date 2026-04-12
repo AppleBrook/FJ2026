@@ -23,14 +23,20 @@ public class EndingManager : MonoBehaviour
     public Sprite cg_End_G;
     public Sprite cg_End_H;
 
+    [Header("打字机设置")]
+    public float typingSpeed = 0.05f; // 每个字弹出的间隔时间
+
     private Queue<string> endingLines = new Queue<string>();
+    
+    /* ========== 新增：打字机核心变量 ========== */
+    private bool isTyping = false;          // 记录当前是否正在打字
+    private string currentLineText = "";    // 记录当前正在打印的完整句子
+    private Coroutine typingCoroutine;      // 记录打字协程，方便随时掐断
+    /* ========================================= */
 
     void Start()
     {
-        // 游戏刚进入结局时：隐藏返回按钮
         if (btnReturnMenu != null) btnReturnMenu.SetActive(false);
-        
-        /* 核心修改 1：一开始把点击按钮和文字框都隐藏起来，防止玩家误触，并让画面保持干净 */
         if (btnNextLine != null) btnNextLine.SetActive(false);
         if (endingText != null) endingText.gameObject.SetActive(false);
 
@@ -38,27 +44,19 @@ public class EndingManager : MonoBehaviour
         
         Debug.Log($"<color=cyan>正在展示结局：{id}</color>");
 
-        // 把文本装填进队列
         LoadEndingData(id);
-        
-        /* 核心修改 2：不再立刻播放第一句，而是开启 0.5 秒留白演出的协程 */
         StartCoroutine(StartEndingSequence());
     }
 
-    /* ================= 新增：0.5 秒留白演出协程 ================= */
     private IEnumerator StartEndingSequence()
     {
-        // 让玩家安静地欣赏 0.5 秒的纯净 CG 图
         yield return new WaitForSeconds(0.5f);
 
-        // 时间到，激活文字框和全屏点击按钮
         if (endingText != null) endingText.gameObject.SetActive(true);
         if (btnNextLine != null) btnNextLine.SetActive(true);
 
-        // 正式播放第一句话
         PlayNextLine();
     }
-    /* ========================================================= */
 
     private void LoadEndingData(string endingID)
     {
@@ -136,9 +134,23 @@ public class EndingManager : MonoBehaviour
 
     public void PlayNextLine()
     {
+        /* --- 核心修改：防误触瞬间显示 --- */
+        if (isTyping)
+        {
+            // 如果玩家急性子点了屏幕，立刻掐断打字，直接显示整句话
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+            endingText.text = currentLineText;
+            isTyping = false;
+            return; 
+        }
+
+        /* --- 原本的读取下一句逻辑 --- */
         if (endingLines.Count > 0)
         {
-            endingText.text = endingLines.Dequeue();
+            currentLineText = endingLines.Dequeue();
+            
+            // 开启打字机协程
+            typingCoroutine = StartCoroutine(TypeText(currentLineText));
         }
         else
         {
@@ -146,6 +158,24 @@ public class EndingManager : MonoBehaviour
             StartCoroutine(ShowReturnMenuDelayed());
         }
     }
+
+    /* ========== 新增：打字机协程 ========== */
+    private IEnumerator TypeText(string lineToType)
+    {
+        isTyping = true;
+        endingText.text = ""; // 先清空文本框
+
+        // 把完整的句子拆成一个个字符，循环打印
+        foreach (char letter in lineToType.ToCharArray())
+        {
+            endingText.text += letter;
+            yield return new WaitForSeconds(typingSpeed); // 稍微等零点几秒再打下一个字
+        }
+
+        // 打完啦，解开状态锁
+        isTyping = false;
+    }
+    /* ===================================== */
 
     private IEnumerator ShowReturnMenuDelayed()
     {
