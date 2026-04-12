@@ -5231,6 +5231,10 @@ MonoBehaviour:
   rightSideContainer: {fileID: 207936231}
   btnSendToEarth: {fileID: 832792953}
   btnSendToAlien: {fileID: 1449886801}
+  earthNormalSprite: {fileID: 21300000, guid: aa3c57eb8a60f6f4d954988b322a533f, type: 3}
+  earthSelectedSprite: {fileID: 21300000, guid: e61facb070468b8488bec4d7a04d954b, type: 3}
+  alienNormalSprite: {fileID: 21300000, guid: 2e5565389aa2f86419dd8bb7b11bf71c, type: 3}
+  alienSelectedSprite: {fileID: 21300000, guid: c6f8d10340b7f7b4882ddcd32cff8a58, type: 3}
   currentTargetContainer: {fileID: 0}
 --- !u!114 &2061694724
 MonoBehaviour:

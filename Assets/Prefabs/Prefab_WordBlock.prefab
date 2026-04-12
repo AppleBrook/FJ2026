@@ -322,4 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 688541e76bdb99141acc4d396dcbdd44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wordText: {fileID: 8008706273933683163}
+  blockImage: {fileID: 7985230086770192898}
+  word: 
   isSelected: 0

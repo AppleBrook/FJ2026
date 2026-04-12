@@ -1,49 +1,73 @@
 using UnityEngine;
-using UnityEngine.UI; // 控制颜色需要用到
+using UnityEngine.UI;
 using TMPro;
 
 public class WordBlock : MonoBehaviour
 {
-    public bool isSelected = false; // 核心状态：记录自己有没有被选中
+    [Header("UI 组件绑定")]
+    public TextMeshProUGUI wordText;
+    public Image blockImage; // 控制背景图组件
 
-    private Image backgroundImage;  // 背景图组件
-    private Color normalColor = Color.white; // 默认颜色：白
-    private Color selectedColor = Color.gray; // 选中颜色：黄（测试用，以后换图片）
+    [HideInInspector]
+    public string word;
+    [HideInInspector]
+    public bool isSelected = false;
 
-    void Awake()
+    // 内部记下自己当前应该用哪两张图
+    private Sprite normalSprite;
+    private Sprite selectedSprite;
+
+    /* 初始化函数：生成词块时，把字和属于它的两张图传进来 */
+    /* 修改：多加了一个 Color txtColor 参数 */
+    public void Initialize(string text, Sprite normal, Sprite selected, Color txtColor)
     {
-        // 刚出生时，获取自己的背景组件，并设置为默认颜色
-        backgroundImage = GetComponent<Image>();
-        backgroundImage.color = normalColor;
+        word = text;
+        if (wordText != null) 
+        {
+            wordText.text = text;
+            wordText.color = txtColor; /* 新增：穿上衣服的同时，改变字体颜色 */
+        }
+        isSelected = false;
+
+        normalSprite = normal;
+        selectedSprite = selected;
+
+        if (blockImage != null && normalSprite != null)
+        {
+            blockImage.sprite = normalSprite;
+        }
     }
 
-    // 这个函数等下用来绑定鼠标点击事件
+    /* 恢复了你原来的函数名，这样你在 Unity 里绑定的按钮就不会断开 */
     public void ToggleSelection()
     {
-        // 【新增核心限制】：如果我现在还没被选上，且桌面上已经选满 5 个了，直接拒绝！
+        // 【恢复核心限制】：如果还没被选上，且桌面上已经选满 5 个了，直接拒绝！
         if (!isSelected && WordBlockManager.Instance.GetSelectedWordCount() >= 5)
         {
             Debug.Log("超载警告：最多只能选择 5 个词语！");
             return; 
         }
-        // 状态反转：如果是 false 就变 true，如果是 true 就变 false
+
+        // 状态反转
         isSelected = !isSelected;
 
-        // 根据最新状态，切换颜色
-        if (isSelected)
+        // 【核心改动】：不再改变颜色，而是根据状态切换美术图片
+        if (blockImage != null)
         {
-            backgroundImage.color = selectedColor;
-        }
-        else
-        {
-            backgroundImage.color = normalColor;
+            if (isSelected)
+            {
+                blockImage.sprite = selectedSprite;
+            }
+            else
+            {
+                blockImage.sprite = normalSprite;
+            }
         }
 
-        // 【新加的这一行】：每次被点击后，呼叫大管家重新拼凑句子！
+        // 【恢复原本正确的呼叫】：通知大管家重新拼凑句子！
         if (WordBlockManager.Instance != null)
         {
             WordBlockManager.Instance.RebuildTargetSentence();
         }
     }
-    
 }

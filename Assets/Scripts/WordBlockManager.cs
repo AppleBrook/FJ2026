@@ -8,19 +8,30 @@ public class WordBlockManager : MonoBehaviour
     public static WordBlockManager Instance;
     public string currentSentenceID;
 
-    // 定义来源枚举
     public enum MessageSource { Earth, Alien }
     [Header("当前回合状态")]
     public MessageSource currentSource; 
 
     [Header("模具与插槽")]
     public GameObject wordBlockPrefab;
-    public Transform leftSideContainer;  // 地球区
-    public Transform rightSideContainer; // 外星区
+    public Transform leftSideContainer;  
+    public Transform rightSideContainer; 
     
     [Header("发送按钮")]
     public Button btnSendToEarth;
     public Button btnSendToAlien;
+
+    [Header("阵营美术图：地球")]
+    public Sprite earthNormalSprite;
+    public Sprite earthSelectedSprite;
+    /* ========== 新增：地球文字颜色 ========== */
+    public Color earthTextColor = Color.black; 
+
+    [Header("阵营美术图：外星")]
+    public Sprite alienNormalSprite;
+    public Sprite alienSelectedSprite;
+    /* ========== 新增：外星文字颜色 ========== */
+    public Color alienTextColor = Color.white; 
 
     private List<WordBlock> sourceBlocks = new List<WordBlock>();
     private Transform currentSourceContainer;
@@ -28,36 +39,41 @@ public class WordBlockManager : MonoBehaviour
 
     void Awake() { Instance = this; }
 
-    // 核心函数：设置新的一轮对话
     public void SetupNewTurn(string sentence, MessageSource source, string id)
     {
         currentSource = source;
         currentSentenceID = id;
         
-        // 1. 清空两侧所有旧词块
         ClearContainer(leftSideContainer);
         ClearContainer(rightSideContainer);
         sourceBlocks.Clear();
 
-        // 2. 判定谁是“源”，谁是“目标”
         if (source == MessageSource.Alien) {
             currentSourceContainer = rightSideContainer;
             currentTargetContainer = leftSideContainer;
-            btnSendToEarth.interactable = true;  // 只能发给地球
+            btnSendToEarth.interactable = true;  
             btnSendToAlien.interactable = false;
         } else {
             currentSourceContainer = leftSideContainer;
             currentTargetContainer = rightSideContainer;
             btnSendToEarth.interactable = false;
-            btnSendToAlien.interactable = true; // 只能发给外星人
+            btnSendToAlien.interactable = true; 
         }
 
-        // 3. 生成原始词块
+        Sprite srcNormal = (source == MessageSource.Earth) ? earthNormalSprite : alienNormalSprite;
+        Sprite srcSelected = (source == MessageSource.Earth) ? earthSelectedSprite : alienSelectedSprite;
+        
+        /* 新增：判断源头该用什么文字颜色 */
+        Color srcTextColor = (source == MessageSource.Earth) ? earthTextColor : alienTextColor;
+
         string[] words = sentence.Split(' ');
         foreach (string w in words) {
             GameObject newBlock = Instantiate(wordBlockPrefab, currentSourceContainer);
-            newBlock.GetComponentInChildren<TextMeshProUGUI>().text = w;
             WordBlock script = newBlock.GetComponent<WordBlock>();
+            
+            /* 修改：把文字颜色也传进去！ */
+            script.Initialize(w, srcNormal, srcSelected, srcTextColor); 
+            
             sourceBlocks.Add(script);
         }
     }
@@ -66,24 +82,35 @@ public class WordBlockManager : MonoBehaviour
         foreach (Transform child in container) Destroy(child.gameObject);
     }
 
-    // 当词块被点击时，由 WordBlock 脚本呼叫
     public void RebuildTargetSentence()
     {
         ClearContainer(currentTargetContainer);
 
+        Sprite targetNormal = (currentSource == MessageSource.Earth) ? alienNormalSprite : earthNormalSprite;
+        
+        /* 新增：判断目标区域（翻译区）该用什么文字颜色 */
+        Color targetTextColor = (currentSource == MessageSource.Earth) ? alienTextColor : earthTextColor;
+
         foreach (WordBlock block in sourceBlocks) {
             if (block.isSelected) {
                 GameObject clone = Instantiate(wordBlockPrefab, currentTargetContainer);
-                clone.GetComponentInChildren<TextMeshProUGUI>().text = block.GetComponentInChildren<TextMeshProUGUI>().text;
                 
-                // 禁用克隆体的交互
+                TextMeshProUGUI cloneText = clone.GetComponentInChildren<TextMeshProUGUI>();
+                cloneText.text = block.word;
+                /* 新增：把克隆出来的文字颜色也改掉！ */
+                cloneText.color = targetTextColor;
+                
+                Image cloneImg = clone.GetComponent<Image>();
+                if (cloneImg != null && targetNormal != null) {
+                    cloneImg.sprite = targetNormal;
+                }
+                
                 Destroy(clone.GetComponent<Button>());
                 Destroy(clone.GetComponent<WordBlock>());
             }
         }
     }
     
-    // 用来统计现在选了几个词
     public int GetSelectedWordCount()
     {
         int count = 0;
