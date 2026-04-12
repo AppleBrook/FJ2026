@@ -29,9 +29,9 @@ public class EndingManager : MonoBehaviour
     private Queue<string> endingLines = new Queue<string>();
     
     /* ========== 新增：打字机核心变量 ========== */
-    private bool isTyping = false;          // 记录当前是否正在打字
-    private string currentLineText = "";    // 记录当前正在打印的完整句子
-    private Coroutine typingCoroutine;      // 记录打字协程，方便随时掐断
+    private bool isTyping = false;          
+    private string currentLineText = "";    
+    private Coroutine typingCoroutine;      
     /* ========================================= */
 
     void Start()
@@ -44,13 +44,30 @@ public class EndingManager : MonoBehaviour
         
         Debug.Log($"<color=cyan>正在展示结局：{id}</color>");
 
+        /* ================= 全局音效接管 ================= */
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM(); // 停掉日常工作 BGM
+            
+            switch(id)
+            {
+                case "End_E": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_E); break;
+                case "End_H": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_H); break;
+                case "End_G": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_G); break;
+                case "End_F": AudioManager.Instance.PlaySFX(AudioManager.Instance.end_F); break;
+                default: AudioManager.Instance.PlaySFX(AudioManager.Instance.end_BE); break; 
+            }
+        }
+        /* ====================================================== */
+
         LoadEndingData(id);
         StartCoroutine(StartEndingSequence());
     }
 
     private IEnumerator StartEndingSequence()
     {
-        yield return new WaitForSeconds(0.5f);
+        // 【修改点 1】留白时间从 0.5 秒加长到了 1 秒！
+        yield return new WaitForSeconds(1f);
 
         if (endingText != null) endingText.gameObject.SetActive(true);
         if (btnNextLine != null) btnNextLine.SetActive(true);
@@ -134,22 +151,18 @@ public class EndingManager : MonoBehaviour
 
     public void PlayNextLine()
     {
-        /* --- 核心修改：防误触瞬间显示 --- */
         if (isTyping)
         {
-            // 如果玩家急性子点了屏幕，立刻掐断打字，直接显示整句话
+            // 瞬间打完
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
             endingText.text = currentLineText;
             isTyping = false;
             return; 
         }
 
-        /* --- 原本的读取下一句逻辑 --- */
         if (endingLines.Count > 0)
         {
             currentLineText = endingLines.Dequeue();
-            
-            // 开启打字机协程
             typingCoroutine = StartCoroutine(TypeText(currentLineText));
         }
         else
@@ -159,32 +172,35 @@ public class EndingManager : MonoBehaviour
         }
     }
 
-    /* ========== 新增：打字机协程 ========== */
     private IEnumerator TypeText(string lineToType)
     {
         isTyping = true;
-        endingText.text = ""; // 先清空文本框
+        endingText.text = ""; 
 
-        // 把完整的句子拆成一个个字符，循环打印
         foreach (char letter in lineToType.ToCharArray())
         {
             endingText.text += letter;
-            yield return new WaitForSeconds(typingSpeed); // 稍微等零点几秒再打下一个字
+            yield return new WaitForSeconds(typingSpeed); 
         }
 
-        // 打完啦，解开状态锁
         isTyping = false;
     }
-    /* ===================================== */
 
     private IEnumerator ShowReturnMenuDelayed()
     {
+        // 这里的 1 秒等待没变
         yield return new WaitForSeconds(1f);
         if (btnReturnMenu != null) btnReturnMenu.SetActive(true);
     }
 
     public void ReturnToMainMenu()
     {
+        // 【修改点 2】用代码隔空呼叫存在于游戏里的声音管理器，播放 UI 声音
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.ui_Click);
+        }
+        
         GlobalData.currentEndingID = "";
         SceneManager.LoadScene("GameScene"); 
     }

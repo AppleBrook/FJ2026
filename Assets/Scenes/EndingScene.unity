@@ -164,6 +164,7 @@ MonoBehaviour:
   cg_End_F: {fileID: 0}
   cg_End_G: {fileID: 0}
   cg_End_H: {fileID: 0}
+  typingSpeed: 0.05
 --- !u!4 &14020767
 Transform:
   m_ObjectHideFlags: 0

@@ -68,8 +68,17 @@ public class WordBlockManager : MonoBehaviour
             WordBlock script = newBlock.GetComponent<WordBlock>();
             
             script.Initialize(w, srcNormal, srcSelected, srcTextColor); 
-            
             sourceBlocks.Add(script);
+
+            /* ===== 新增：生成词块时，给它绑定“点击音效” ===== */
+            Button btn = newBlock.GetComponent<Button>();
+            if (btn != null) {
+                btn.onClick.AddListener(() => {
+                    if (AudioManager.Instance != null) 
+                        AudioManager.Instance.PlaySFX(AudioManager.Instance.ui_Click);
+                });
+            }
+            /* ================================================== */
         }
     }
 
@@ -110,8 +119,15 @@ public class WordBlockManager : MonoBehaviour
                 
                 // 4. 拿到克隆体身上的按钮组件，让它在被点击时呼叫遥控器
                 Button cloneBtn = clone.GetComponent<Button>();
-                cloneBtn.onClick.RemoveAllListeners(); /* 清空原本从预制体带过来的点击事件 */
-                cloneBtn.onClick.AddListener(() => cloneScript.OnCloneClicked()); /* 绑定新事件 */
+                cloneBtn.onClick.RemoveAllListeners(); 
+                cloneBtn.onClick.AddListener(() => {
+                    /* ===== 新增：点击目标区词块时，播放“退回音效” ===== */
+                    if (AudioManager.Instance != null) 
+                        AudioManager.Instance.PlaySFX(AudioManager.Instance.ui_Back);
+                    /* ================================================== */
+                    
+                    cloneScript.OnCloneClicked();
+                });
             }
         }
     }

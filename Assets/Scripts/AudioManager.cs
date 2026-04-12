@@ -72,4 +72,9 @@ public class AudioManager : MonoBehaviour
             sfxSource.PlayOneShot(clip); 
         }
     }
+    
+    public void PlayClickSound()
+    {
+        PlaySFX(ui_Click);
+    }
 }

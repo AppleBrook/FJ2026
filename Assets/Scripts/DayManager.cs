@@ -215,6 +215,14 @@ public class DayManager : MonoBehaviour
         if (currentVoiceLogs.Count > 0)
         {
             currentLineText = currentVoiceLogs.Dequeue();
+
+            /* ===== 新增：识别到接入文字时，播放滴滴声 ===== */
+            if (currentLineText.Contains("接入中") && AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.sfx_Call);
+            }
+            /* ============================================== */
+
             typingCoroutine = StartCoroutine(TypeText(currentLineText));
         }
         else
