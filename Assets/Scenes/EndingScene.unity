@@ -155,8 +155,8 @@ MonoBehaviour:
   cgImage: {fileID: 340638280}
   btnReturnMenu: {fileID: 51755493}
   btnNextLine: {fileID: 1341188543}
-  forceDebug: 0
-  debugEndingID: End_F
+  forceDebug: 1
+  debugEndingID: End_H
   cg_End_A: {fileID: 21300000, guid: ac739f10761766946870e1b601f481c9, type: 3}
   cg_End_B: {fileID: 21300000, guid: 77ef1524712b7284a9bc260ccef358ff, type: 3}
   cg_End_C: {fileID: 21300000, guid: 3024b3e6e8f90904b957e211ebf59e10, type: 3}
