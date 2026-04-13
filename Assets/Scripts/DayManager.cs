@@ -107,13 +107,21 @@ public class DayManager : MonoBehaviour
                         if (ButtonVisualManager.Instance != null) {
                             ButtonVisualManager.Instance.UpdateButtons(src);
                         }
+                        // 【新增这一句】：通知发送脚本，现在可以发下一条了！
+                        if (MessageSender.Instance != null)
+                        {
+                            MessageSender.Instance.UnlockSending();
+                        }
                     });
                 }
                 else
                 {
-                    // 兜底：如果忘了挂脚本，直接显示文字防卡死
+                    // 地球发信，直接显示
                     WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
                     if (ButtonVisualManager.Instance != null) ButtonVisualManager.Instance.UpdateButtons(src);
+            
+                    // 【新增这一句】：通知发送脚本解锁
+                    if (MessageSender.Instance != null) MessageSender.Instance.UnlockSending();
                 }
             }
             else

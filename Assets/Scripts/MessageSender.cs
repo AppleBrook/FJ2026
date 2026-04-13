@@ -79,14 +79,12 @@ public class MessageSender : MonoBehaviour
             
             // 呼叫 DayManager 等待 1.5 秒后出下一句
             DayManager.Instance.Invoke("LoadNextSentence", 1.5f);
-            
-            /* 核心改动 3：同样等待 1.5 秒后，把锁解开 */
-            Invoke("UnlockSending", 1.5f); 
+
         }
     }
 
     /* 新增：解开防连点锁的函数 */
-    private void UnlockSending()
+    public void UnlockSending()
     {
         isProcessing = false;
     }
