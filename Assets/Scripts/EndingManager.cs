@@ -120,40 +120,69 @@ public class EndingManager : MonoBehaviour
 
         switch (endingID)
         {
-            case "End_A":
+case "End_A":
                 if (cg_End_A != null) cgImage.sprite = cg_End_A;
                 activeTextComponent = text_End_A;
+                
+                // 第一页
                 endingLines.Enqueue("你和外星人之间的一次次通信，\n都在地球上被解读为末日的先兆。\n\n人们心头的阴影被恐惧喂养得越来越大，越来越壮，\n最后，核弹在陆地上次第升起，目标是地球。");
-                endingLines.Enqueue("你在空间站看着地球自爆了。\n蔚蓝色的碎片绕着空间站缓缓旋转，里面包裹着你的家人的余温。\n\n你现在是世界上最后一个人类了。");
-                endingLines.Enqueue("— 结局 A：【疯狂】 —");
+                
+                // 第二页
+                endingLines.Enqueue("你在空间站看着地球自爆了。\n蔚蓝色的碎片绕着空间站缓缓旋转，\n里面包裹着你的家人的余温。");
+                
+                // 第三页
+                endingLines.Enqueue("你现在是世界上最后一个人类了。");
+                
+                // 第四页
+                endingLines.Enqueue("— 结局A：【疯狂】 —");
                 break;
 
             case "End_B":
                 if (cg_End_B != null) cgImage.sprite = cg_End_B;
                 activeTextComponent = text_End_B;
-                endingLines.Enqueue("太阳系内无新事，\n每一场战争都事关傲慢，事关偏见。");
-                endingLines.Enqueue("而每一场毁灭，都源于名为“文明”的傲慢，和名为“物种”的偏见。");
-                endingLines.Enqueue("地球主动向外星人发射了核导弹。\n你站在空间站，看着一缕炙热的光芒划过群星，带来了死亡。");
-                endingLines.Enqueue("——结局 B：【傲慢与偏见】——");
+                
+                // 第一页
+                endingLines.Enqueue("太阳系内无新事，\n每一场战争都事关傲慢，事关偏见。\n\n而每一场毁灭，都源于名为“文明”的傲慢，\n和名为“物种”的偏见。");
+                
+                // 第二页
+                endingLines.Enqueue("地球主动向外星人发射了核导弹。\n\n你站在空间站，\n看着一缕炙热的光芒划过群星，带来了死亡。");
+                
+                // 第三页
+                endingLines.Enqueue("— 结局 B：【傲慢与偏见】 —");
                 break;
 
             case "End_C":
                 if (cg_End_C != null) cgImage.sprite = cg_End_C;
                 activeTextComponent = text_End_C;
-                endingLines.Enqueue("猜疑链一旦锁死，\n沟通便化作毫无意义的杂音。\n停留在寂静深空的外星文明对吵闹的地球失去了信任与耐心。");
-                endingLines.Enqueue("地球在外星人高效的打击下崩解了。\n蔚蓝色的碎片绕着空间站缓缓旋转，里面包裹着你的家人的余温。");
+                
+                // 第一页
+                endingLines.Enqueue("猜疑链一旦锁死，\n沟通便化作毫无意义的杂音。\n\n停留在寂静深空的外星文明\n对吵闹的地球失去了信任与耐心。");
+                
+                // 第二页
+                endingLines.Enqueue("地球在外星人高效的打击下崩解了。\n\n蔚蓝色的碎片绕着空间站缓缓旋转，\n里面包裹着你的家人的余温。");
+                
+                // 第三页
                 endingLines.Enqueue("你现在是世界上最后一个人类了。");
-                endingLines.Enqueue("——结局 C：【无效杂音】——");
+                
+                // 第四页
+                endingLines.Enqueue("— 结局 C：【无效杂音】 —");
                 break;
 
             case "End_D":
                 if (cg_End_D != null) cgImage.sprite = cg_End_D;
                 activeTextComponent = text_End_D;
-                endingLines.Enqueue("你无害的小植物死了。\n它柔软的草叶在你眼前慢慢枯萎。");
-                endingLines.Enqueue("今夜，你不关心人类。");
+                
+                // 第一页
+                endingLines.Enqueue("你无害的小植物死了。\n它柔软的草叶在你眼前慢慢枯萎。\n\n今夜，你不关心人类。");
+                
+                // 第二页
                 endingLines.Enqueue("你亲手结束了这场孤独的远征，\n一具无主躯壳在群星间悠悠漂浮。");
+                
+                // 第三页
                 endingLines.Enqueue("今夜，宇宙热闹而寂寥。");
-                endingLines.Enqueue("——结局 D：【今夜你不关心人类】——");
+                
+                // 第四页
+                endingLines.Enqueue("— 结局 D：【今夜你不关心人类】 —");
                 break;
 
             case "End_E":
