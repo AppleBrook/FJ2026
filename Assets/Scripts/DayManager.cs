@@ -51,6 +51,13 @@ public class DayManager : MonoBehaviour
         if (topBar != null) topBar.SetActive(false);
         if (middleDisplay != null) middleDisplay.SetActive(false);
         if (centerZone != null) centerZone.SetActive(false);
+
+        // ================= 核心修复：把丢失的背景音乐加回来！ =================
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM(AudioManager.Instance.bgm_Gameplay);
+        }
+        // ====================================================================
     }
 
     public void OpenEmail() { if (panelEmail != null) panelEmail.SetActive(true); }
@@ -76,6 +83,12 @@ public class DayManager : MonoBehaviour
         foreach (string id in uniqueIDs) dailyMessageQueue.Enqueue(id);
 
         Debug.Log($"--- {currentDay} 开始工作！---");
+        
+        // 每日开工强制开锁（防连点Bug终极保险）
+        if (MessageSender.Instance != null) {
+            MessageSender.Instance.UnlockSending();
+        }
+        
         LoadNextSentence();
     }
 
@@ -90,24 +103,20 @@ public class DayManager : MonoBehaviour
             WordBlockManager.MessageSource src = data.source == "外星人" ? 
                 WordBlockManager.MessageSource.Alien : WordBlockManager.MessageSource.Earth;
 
-            // ================= 新增：波形图演出逻辑 =================
+            // ================= 波形图演出逻辑 =================
             if (src == WordBlockManager.MessageSource.Alien)
             {
-                // 计算时长：假设每个词块跳动 0.2 秒，用 Mathf.Clamp 强行把总时长限制在 0.5 秒 到 2.0 秒之间
                 int wordCount = data.words.Length;
                 float waveDuration = Mathf.Clamp(wordCount * 0.2f, 0.5f, 2.0f);
 
-                // 呼叫波形图演出
                 if (WaveformEffect.Instance != null)
                 {
-                    // 使用 () => { ... } 语法，确保波形图播放完才执行里面的文字加载
                     WaveformEffect.Instance.PlayWave(waveDuration, () => 
                     {
                         WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
                         if (ButtonVisualManager.Instance != null) {
                             ButtonVisualManager.Instance.UpdateButtons(src);
                         }
-                        // 【新增这一句】：通知发送脚本，现在可以发下一条了！
                         if (MessageSender.Instance != null)
                         {
                             MessageSender.Instance.UnlockSending();
@@ -116,21 +125,19 @@ public class DayManager : MonoBehaviour
                 }
                 else
                 {
-                    // 地球发信，直接显示
                     WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
                     if (ButtonVisualManager.Instance != null) ButtonVisualManager.Instance.UpdateButtons(src);
             
-                    // 【新增这一句】：通知发送脚本解锁
                     if (MessageSender.Instance != null) MessageSender.Instance.UnlockSending();
                 }
             }
             else
             {
-                // 如果是地球发信，不需要波形图，直接显示文字
                 WordBlockManager.Instance.SetupNewTurn(sentence, src, data.id);
                 if (ButtonVisualManager.Instance != null) {
                     ButtonVisualManager.Instance.UpdateButtons(src);
                 }
+                if (MessageSender.Instance != null) MessageSender.Instance.UnlockSending();
             }
             // =========================================================
         }
@@ -230,36 +237,30 @@ public class DayManager : MonoBehaviour
 
     public void PlayNextVoiceLog()
     {
-        /* --- 如果正在倒计时，立刻掐断 --- */
         if (autoAdvanceCoroutine != null)
         {
             StopCoroutine(autoAdvanceCoroutine);
             autoAdvanceCoroutine = null;
         }
 
-        /* --- 核心修改：防误触瞬间显示 --- */
         if (isTyping)
         {
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
             txtVoiceLog.text = currentLineText;
             isTyping = false;
             
-            // 瞬间显示完毕后，如果是系统提示语，开启 2 秒倒计时
             CheckForAutoAdvance(currentLineText);
             return; 
         }
 
-        /* --- 原本的读取下一句逻辑 --- */
         if (currentVoiceLogs.Count > 0)
         {
             currentLineText = currentVoiceLogs.Dequeue();
 
-            /* ===== 新增：识别到接入文字时，播放滴滴声 ===== */
             if (currentLineText.Contains("接入中") && AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlaySFX(AudioManager.Instance.sfx_Call);
             }
-            /* ============================================== */
 
             typingCoroutine = StartCoroutine(TypeText(currentLineText));
         }
@@ -271,7 +272,6 @@ public class DayManager : MonoBehaviour
         }
     }
 
-    /* ========== 新增：打字机协程 ========== */
     private IEnumerator TypeText(string lineToType)
     {
         isTyping = true;
@@ -284,18 +284,13 @@ public class DayManager : MonoBehaviour
         }
 
         isTyping = false;
-        
-        // 打字正常结束时，检查是否需要自动推进
         CheckForAutoAdvance(lineToType);
     }
 
-    /* ========== 新增：检查是否需要自动推进的函数 ========== */
     private void CheckForAutoAdvance(string line)
     {
-        // 只有当整句话都显示完毕后，且包含【】时，才开始 2 秒倒计时
         if (line.Contains("【") && line.Contains("】"))
         {
-             // 确保在开启新的协程前，把旧的清理掉，虽然前面已经清理过，但为了安全起见
             if (autoAdvanceCoroutine != null) StopCoroutine(autoAdvanceCoroutine);
             autoAdvanceCoroutine = StartCoroutine(AutoAdvanceVoiceLog());
         }
@@ -311,34 +306,24 @@ public class DayManager : MonoBehaviour
     {
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
-        // 1. 结算宠物数值
         if (GameManager.Instance.accuracy >= 60) {
             GameManager.Instance.petState++;
         } else {
             GameManager.Instance.petState--;
         }
 
-        // 限制最大和最小值（防止超出美术做的三种状态）
         if (GameManager.Instance.petState > 3) GameManager.Instance.petState = 3;
         if (GameManager.Instance.petState < 0) GameManager.Instance.petState = 0;
         
-        // ================= 新增：通知动画机换动作！ =================
         if (PetManager.Instance != null) {
             PetManager.Instance.UpdatePetAnimation();
         }
-        // =========================================================
         
-        // ================= 新增：死亡急刹车机制！ ===================
-        // 检查刚刚扣完血后，宠物是不是死了？或者其他数值爆表了？
         if (GameManager.Instance.CheckInstantDeath() == true) 
         {
-            // 如果死了，立刻 return 踩死刹车！
-            // 绝对不让代码往下执行，这样就不会强行进入第三天了！
             return; 
         }
-        // =========================================================
 
-        // 只有安全活下来，才会重置准确率并进入下一天
         GameManager.Instance.ResetDailyStats(); 
         currentDayIndex++; 
 
