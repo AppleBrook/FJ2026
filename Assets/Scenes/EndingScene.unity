@@ -155,15 +155,15 @@ MonoBehaviour:
   cgImage: {fileID: 340638280}
   btnReturnMenu: {fileID: 51755493}
   btnNextLine: {fileID: 1341188543}
-  forceDebug: 1
-  debugEndingID: End_H
+  forceDebug: 0
+  debugEndingID: End_G
   cg_End_A: {fileID: 21300000, guid: ac739f10761766946870e1b601f481c9, type: 3}
   cg_End_B: {fileID: 21300000, guid: 77ef1524712b7284a9bc260ccef358ff, type: 3}
   cg_End_C: {fileID: 21300000, guid: 3024b3e6e8f90904b957e211ebf59e10, type: 3}
   cg_End_D: {fileID: 21300000, guid: 0aa5a84463193bc4aac49faa7b134d78, type: 3}
   cg_End_E: {fileID: 21300000, guid: 5db2d77f18872314b88b58cba096d2c7, type: 3}
   cg_End_F: {fileID: 21300000, guid: 234cbe1ae0a26774fb17c5854658914b, type: 3}
-  cg_End_G: {fileID: 21300000, guid: dc1f2050548e9554cbc75e4d9fc3c625, type: 3}
+  cg_End_G: {fileID: 21300000, guid: e3ceeda2d3c9e8a48b728e745c489aec, type: 3}
   cg_End_H: {fileID: 21300000, guid: 425ecdf0f95b9ba4987cbdd3db17725c, type: 3}
   text_End_A: {fileID: 1800691339}
   text_End_B: {fileID: 26837768}
