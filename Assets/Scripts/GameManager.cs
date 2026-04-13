@@ -27,6 +27,14 @@ public class GameManager : MonoBehaviour
         arrogance += aChange;
         friendliness += fChange;
         accuracy += accChange;
+
+        // ================= 新增：数值钳制（极其重要） =================
+        // 强制把所有数值限制在 0 到 100 之间，防止数值溢出导致 UI 显示卡死
+        panic = Mathf.Clamp(panic, 0, 100);
+        arrogance = Mathf.Clamp(arrogance, 0, 100);
+        friendliness = Mathf.Clamp(friendliness, 0, 100);
+        accuracy = Mathf.Clamp(accuracy, 0, 100);
+        // ==============================================================
         
         // 每次发完消息数值变动后，立刻检测是否暴毙！
         CheckInstantDeath(); 
