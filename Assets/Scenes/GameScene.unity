@@ -2662,7 +2662,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -371.4, y: -137.8}
+  m_AnchoredPosition: {x: 60.3, y: -88.9}
   m_SizeDelta: {x: 256.7037, y: 60.5219}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &560723826
@@ -3161,7 +3161,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -397}
+  m_AnchoredPosition: {x: 0, y: -356}
   m_SizeDelta: {x: 240, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &680963463
@@ -3527,7 +3527,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -155.5, y: -102}
+  m_AnchoredPosition: {x: 348.4, y: -17}
   m_SizeDelta: {x: 256.7037, y: 60.5219}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &744770933
@@ -5314,7 +5314,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -40}
+  m_AnchoredPosition: {x: 0, y: -135}
   m_SizeDelta: {x: 1000, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1116145493
@@ -5337,7 +5337,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5730\u7403\u5371\u5728\u65E6\u5915\uFF01\r\n\u5728\u6570\u5149\u79D2\u5916\u7684\u6DF1\u7A7A\uFF0C\u505C\u6CCA\u4E86\u4E00\u7FA4\u5916\u661F\u4EBA\u3002\r\n\u6211\u4EEC\u5BF9\u5B83\u4EEC\u4E00\u65E0\u6240\u77E5\u3002\u4E3A\u4E86\u9690\u85CF\u81EA\u5DF1\uFF0C\u5730\u7403\u65E0\u6CD5\u53D1\n\u9001\u6216\u63A5\u6536\u4EFB\u4F55\u4FE1\u606F\u3002\r\n\r\n\u56E0\u6B64\uFF0C\r\n\u3010\u4F60\u3011\u88AB\u8363\u5E78\u5730\u9009\u4E2D\u4E86\u3002\r\n\u3010\u4F60\u3011\u4E58\u5750\u7684\u98DE\u8239\uFF0C\u5DF2\u7ECF\u88AB\u53D1\u5C04\u5230\u5916\u661F\u4EBA\u9644\u8FD1\uFF0C\r\n\u3010\u4F60\u3011\u5C06\u4EE3\u8868\u5168\u5730\u7403\uFF0C\u63A5\u53D7\u4ED6\u4EEC\u7684\u4FE1\u606F\uFF0C\u56DE\u4F20\u7ED9\u5730\u7403\u3002\u5E76\u4E14\uFF0C\u5C06\u5730\u7403\u7684\u4FE1\u606F\u56DE\u590D\u7ED9\u4ED6\u4EEC\u3002\r\n\n\u53D7\u9650\u4E8E\u8D85\u957F\u8DDD\u6CE2\u6BB5\u7684\u8D1F\u8F7D\uFF0C\u6BCF\u6B21\u4F20\u8BAF\uFF0C\u4F60\u5FC5\u987B\u5C06\u5916\u661F\u6587\u660E\u7684\u6D77\u91CF\u4FE1\u606F\u6D53\u7F29\u4E3A4\u81F35\u4E2A\u5173\u952E\u8BED\u6C47\u3002\u5730\u7403\u7684\u56DE\u590D\u540C\u6837\u53EA\u80FD\u6D53\u7F29\u4E3A\n4\u81F35\u4E2A\u5173\u952E\u8BED\u6C47\u3002\r\n\r\n\u6587\u660E\u7684\u660E\u65E5\uFF0C\u7CFB\u4E8E\u8FD9\u53EA\u8A00\u7247\u8BED\u4E2D\u3002\u4F60\u7684\u5BB6\u4EBA\u548C\u6574\u4E2A\u5730\u7403\uFF0C\u90FD\u5728\u770B\u7740\u4F60\u3002\r\n\u5730\u7403\u5411\u4F60\u81F4\u4EE5\u6700\u9AD8\u7684\u656C\u610F\u3002"
+  m_text: "\u5730\u7403\u5371\u5728\u65E6\u5915\uFF01\n\u5728\u6570\u5149\u79D2\u5916\u7684\u6DF1\u7A7A\uFF0C\u505C\u6CCA\u4E86\u4E00\u7FA4\u5916\u661F\u4EBA\u3002\n\u4E3A\u4E86\u9690\u85CF\u81EA\u5DF1\uFF0C\u5730\u7403\u51B3\u5B9A\u6D3E\u51FA\u4F60\u53BB\u5BF9\u8BDD\u3002\n\n\u56E0\u6B64\uFF0C\u3010\u4F60\u3011\u5C06\u626E\u6F14\u4E00\u4E2A\u4F20\u8BDD\u7B52\uFF0C\u5728\u5916\u661F\u4EBA\u548C\u5730\u7403\u4E4B\u95F4\u6536\u53D1\u4FE1\u606F\u3002\n\n\u53D7\u9650\u4E8E\u6280\u672F\uFF0C\u4F60\u5FC5\u987B\u5C06\u5916\u661F\u6587\u660E\u7684\u4FE1\u606F\u7B80\u5316\u4E3A4\u81F35\u4E2A\u5173\u952E\u8BED\u6C47\uFF0C\u53D1\u7ED9\u5730\u7403\u3002\n\u5730\u7403\u7684\u56DE\u590D\u540C\u6837\u53EA\u80FD\u7B80\u5316\u4E3A4\u81F35\u4E2A\u5173\u952E\u8BED\u6C47\u3002\n\n\u6587\u660E\u7684\u660E\u65E5\uFF0C\u7CFB\u4E8E\u4F60\u7684\u53EA\u8A00\u7247\u8BED\u4E2D\u3002\n\u4F60\u7684\u5BB6\u4EBA\u548C\u6574\u4E2A\u5730\u7403\uFF0C\u90FD\u5728\u770B\u7740\u4F60\u3002\n\u5730\u7403\u5411\u4F60\u81F4\u4EE5\u6700\u9AD8\u7684\u656C\u610F\u3002"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddc1ad4e036c76a449430c1abd487051, type: 2}
   m_sharedMaterial: {fileID: 5205985099644951752, guid: ddc1ad4e036c76a449430c1abd487051, type: 2}
@@ -6158,7 +6158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 405, y: 254}
+  m_AnchoredPosition: {x: 334, y: 282}
   m_SizeDelta: {x: 256, y: 256}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1249272990
@@ -9002,7 +9002,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1947784077
 RectTransform:
   m_ObjectHideFlags: 0
