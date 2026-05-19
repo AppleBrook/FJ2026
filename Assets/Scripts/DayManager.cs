@@ -216,16 +216,16 @@ public class DayManager : MonoBehaviour
             currentVoiceLogs.Enqueue("【已接入：宝贝】");
 
             if (acc >= 60) {
-                currentVoiceLogs.Enqueue("妈妈，今天有叔叔阿姨送了我礼物。");
+                currentVoiceLogs.Enqueue("今天有叔叔阿姨送了我礼物。");
                 currentVoiceLogs.Enqueue("他们说你是全地球最厉害的人，正在和外星人讲故事。我好崇拜你呀！");
                 currentVoiceLogs.Enqueue("你什么时候可以回来给我讲故事呢？");
             } else if (acc >= 30) {
-                currentVoiceLogs.Enqueue("妈妈，今天学校放假了，老师的表情好严肃。");
-                currentVoiceLogs.Enqueue("妈咪说只要你在努力工作，大家就都会没事的。");
+                currentVoiceLogs.Enqueue("今天学校放假了，老师的表情好严肃。");
+                currentVoiceLogs.Enqueue("妈妈说只要你在努力工作，大家就都会没事的。");
                 currentVoiceLogs.Enqueue("我给你画了一幅画，等你回来就给你看。");
             } else {
-                currentVoiceLogs.Enqueue("刚才窗户外面好响，妈咪抱紧我不让我看，她说那是烟花。");
-                currentVoiceLogs.Enqueue("妈妈快回来好不好。");
+                currentVoiceLogs.Enqueue("刚才窗户外面好响，妈妈抱紧我不让我看，她说那是烟花。");
+                currentVoiceLogs.Enqueue("快回来好不好。");
                 currentVoiceLogs.Enqueue("你现在就回来。我好想你。");
             }
         }
