@@ -44,6 +44,13 @@ public class ButtonTextPressEffect : MonoBehaviour, IPointerDownHandler, IPointe
         ResetPosition();
     }
 
+    // 【新增】：当按钮被 SetActive(false) 隐藏时，自动触发这个函数
+    private void OnDisable()
+    {
+        ResetPosition(); // 强制把文字拉回原位，把 isPressed 改回 false！
+    }
+
+    // （这是你原本就有的复位逻辑，保持不变即可）
     private void ResetPosition()
     {
         if (targetTransform != null && isPressed)

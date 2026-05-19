@@ -756,7 +756,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -13, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &95996015
 MonoBehaviour:
@@ -3864,7 +3864,7 @@ RectTransform:
   m_GameObject: {fileID: 832792951}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 553993332}
@@ -3872,7 +3872,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 634, y: -320}
+  m_AnchoredPosition: {x: 634, y: -637}
   m_SizeDelta: {x: 200, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &832792953
@@ -7115,7 +7115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1396913101
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7271,7 +7271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1449886800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7281,7 +7281,7 @@ RectTransform:
   m_GameObject: {fileID: 1449886799}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1316965272}
@@ -9180,7 +9180,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2029719203
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9468,7 +9468,7 @@ MonoBehaviour:
   arrogance: 50
   friendliness: 50
   accuracy: 50
-  petState: 2
+  petState: 3
   deathFadeImage: {fileID: 484670376}
   fadeDuration: 1.5
 --- !u!4 &2061694721
@@ -9588,9 +9588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   btnEarth: {fileID: 832792952}
-  textEarth: {fileID: 553993331}
   btnAlien: {fileID: 1449886800}
-  textAlien: {fileID: 1316965271}
 --- !u!114 &2061694728
 MonoBehaviour:
   m_ObjectHideFlags: 0
