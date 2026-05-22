@@ -304,6 +304,13 @@ public class DayManager : MonoBehaviour
 
     public void GoToNextDay()
     {
+        // ================= 新增：强行掐断所有没播完的音效！ =================
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopAllSFX();
+        }
+        // ====================================================================
+
         if (panelEndOfDay != null) panelEndOfDay.SetActive(false);
 
         if (GameManager.Instance.accuracy >= 60) {
